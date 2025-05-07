@@ -3,6 +3,7 @@
 use App\Http\Controllers\Api\EmployeeController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\TestController;
+use App\Http\Controllers\Api\UserController;
 
 Route::prefix('files')->controller(TestController::class)->group(function () {
     Route::post('/', 'store');        // Upload file
@@ -27,7 +28,8 @@ Route::get('/users', function () {
 
 
 
-
+Route::get('/users',       [UserController::class, 'index']);
+Route::get('/users/{id}',  [UserController::class, 'show']);
 
 
 

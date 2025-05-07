@@ -12,9 +12,6 @@ Route::get('dashboard', function () {
 })->middleware(['auth', 'verified'])->name('dashboard');
 
 
-// Route::get('/test-page', function () {
-//     return Inertia::render('TestPage');
-// });
 Route::get('/test-page', function () {
     return Inertia::render('TestPage');
 });
