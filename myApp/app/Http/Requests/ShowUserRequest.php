@@ -11,9 +11,16 @@ class ShowUserRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
+    protected function prepareForValidation(): void
+    {
+        $this->merge([
+            'id' => $this->route('id'),
+        ]);
+    }
+    
     /**
      * Get the validation rules that apply to the request.
      *

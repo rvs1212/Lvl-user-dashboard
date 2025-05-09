@@ -11,7 +11,7 @@ class IndexUserRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -23,7 +23,7 @@ class IndexUserRequest extends FormRequest
     {
         return [
             'per_page' => ['sometimes','integer','min:1','max:100'],
-            'search'   => ['sometimes','string','max:255'],
+            'search'   => ['nullable','string','max:255'],
         ];
     }
 }

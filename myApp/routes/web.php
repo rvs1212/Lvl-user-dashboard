@@ -16,6 +16,7 @@ Route::get('/test-page', function () {
     return Inertia::render('TestPage');
 });
 
+Route::get('/users', fn() => Inertia::render('users/index'));
 
 
 

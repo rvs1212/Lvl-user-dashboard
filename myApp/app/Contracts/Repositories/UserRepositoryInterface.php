@@ -8,4 +8,7 @@ interface UserRepositoryInterface
 {
     public function paginateWithAddress(int $perPage, ?string $search): LengthAwarePaginator;
     public function findWithAddressById(int $id): ?User;
+    public function createWithAddress(array $data): User;
+    public function updateWithAddress(int $id, array $data): ?User;
+    public function deleteById(int $id): bool;
 }

@@ -1,8 +1,9 @@
 import api from '@/services/api';
+import type { AxiosRequestConfig } from 'axios';
 
 export function useApi<T = any>() {
-    const get = async (url: string) => {
-      const response = await api.get<T>(url);
+    const get = async (url: string, config?: AxiosRequestConfig) => {
+      const response = await api.get<T>(url, config);
       return response.data;
     };
   
