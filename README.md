@@ -11,7 +11,7 @@ A user management dashboard built with Laravel 12 on the back end and Inertia.j
 ![User dashboard](/myApp/Images/dashboard.png)
 
 ### Searching, pagination
-![User dashboard](/myApp/Images/search1.png)
+![User dashboard](/myApp/Images/Search1.png)
 
 ![User dashboard](/myApp/Images/Search2.png)
 
