@@ -169,7 +169,7 @@ Content-Type: application/json
 ```
 
 ```
- POST /api/users
+ POST /api/v1/users
 
 {
   "first_name": "Bob",
@@ -222,7 +222,7 @@ Content-Type: application/json
 ```
 
 ```
-PUT /api/users/123
+PUT /api/v1/users/123
 
 {
   "first_name": "Robert",
