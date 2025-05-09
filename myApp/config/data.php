@@ -9,7 +9,7 @@ return [
         'no_content' => 204,
         'not_found'  => 404,
         'validation_error' => 422,
-        // …any others you like
+        
     ],
 
     // Pagination defaults

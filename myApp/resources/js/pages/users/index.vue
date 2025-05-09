@@ -70,8 +70,6 @@ async function fetchUsers() {
     if (searchTerm.value.trim() !== '') {
       params.search = searchTerm.value.trim()
     }
-
-    // No generics on .get() itself—apiUsers already knows its return type
     const data = await apiUsers.get('/users', { params })
 
     users.value      = data.data
@@ -101,7 +99,6 @@ async function openModal(userId: number) {
 }
 
 function goToPage() {
-  // Clamp between 1 and the last page
   const p = Math.max(1, Math.min(totalPages.value, gotoPage.value));
   page.value = p;
 }
@@ -111,7 +108,6 @@ function goToPage() {
 //watch([searchTerm, perPage, page], fetchUsers)
 watch([ perPage, page], fetchUsers)
 
-// Fire search 300 ms after typing stops:
 watch(searchTerm, () => {
   fetchUsersDebounced()
 })
@@ -138,7 +134,6 @@ async function onDeleteConfirm() {
   if (userToDelete.value === null) return
   
   try {
-    // call DELETE /api/users/:id
     await useApi().del(`users/${userToDelete.value}`)
     toast.success('User deleted')
     await fetchUsers()      // refresh the list

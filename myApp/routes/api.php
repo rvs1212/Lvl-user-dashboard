@@ -9,18 +9,14 @@ Route::get('/test-api', [TestController::class, 'testMethod']);
 
 //--------------------Routes------
 
-
-
-Route::get('/users', [UserController::class, 'index']);
-Route::get('/users/{id}', [UserController::class, 'show']);
-Route::post('/users', [UserController::class, 'store']);
-Route::put('/users/{id}', [UserController::class, 'updateUser']);
-Route::delete('/users/{id}', [UserController::class, 'deleteUser']);
-
-
-
-
-
-
+Route::prefix('v1/users')
+     ->controller(UserController::class)
+     ->group(function () {
+         Route::get('/',       'index')->name('users.index');
+         Route::get('/{id}',   'show')->name('users.show');
+         Route::post('/',      'store')->name('users.store');
+         Route::put('/{id}',   'updateUser')->name('users.update');
+         Route::delete('/{id}','deleteUser')->name('users.destroy');
+     });
 
 

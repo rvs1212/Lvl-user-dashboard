@@ -9,6 +9,7 @@ use Illuminate\Support\Str;
 
 class UserRepository implements UserRepositoryInterface
 {
+    //Full text index based seach can be done later
     public function paginateWithAddress(int $perPage, ?string $search): LengthAwarePaginator
     {
         return User::with('address')
@@ -90,8 +91,7 @@ class UserRepository implements UserRepositoryInterface
     {
         // Wrap in transaction so address deletion (via FK cascade) is safe
         return DB::transaction(function () use ($id) {
-            // returns number of records deleted (0 or 1)
-            return (bool) User::where('id', $id)->delete();
+            return User::where('id', $id)->delete();
         });
     }
 }
