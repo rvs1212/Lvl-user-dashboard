@@ -3,7 +3,7 @@
 A user management dashboard built with Laravel 12 on the back end and Inertia.js + Vue 3 (TypeScript) on the front end. It supports:
 
 - **1 million+ user records** seeded in batches  
-- Fast, debounced, multi‑field search (first name, last name, email, city, country)  
+- Fast, multi‑field search (first name, last name, email, city, country)  
 - Paginated listing
 - Create, view, edit, and delete users (with address) via modals  
 ---------------------------------------
@@ -39,7 +39,7 @@ app/
 │   ├── Controllers/Api     # API controllers
 │   ├── Middleware/         # HTTP middleware
 │   └── Requests/           # Request validation
-├── Contracts/              # Service & repository contracts (SOLID “I”)
+├── Contracts/              
 │   ├── User/               # User-related contracts
 │   └── Repositories/       # Repository contracts
 ├── Services/User/          # User-related services
@@ -50,8 +50,8 @@ app/
 
 database/
 ├── factories/              # Model factories for seeding/testing
-├── migrations/
-└── seeders/
+├── migrations/             # Database migrations
+└── seeders/                # Database seeders
 
 routes/
 ├── api.php                 # API routes
@@ -65,14 +65,14 @@ tests/
 ### Frontend
 ```
 resources/js/
-├─ pages/users/Index.vue
+├─ pages/users/Index.vue      # User listing page
 ├─ components/
-│   ├─ UserCreateModal.vue
-│   ├─ UserDetailModal.vue
-│   ├─ Loader.vue
-│   └─ DeleteConfirmModal.vue
-├─ composables/useApi.ts
-└─ services/api.ts
+│   ├─ UserCreateModal.vue    # User create modal
+│   ├─ UserDetailModal.vue    # User detail modal for viewing and editing
+│   ├─ Loader.vue             # Loader component
+│   └─ DeleteConfirmModal.vue # Delete confirmation modal
+├─ composables/useApi.ts      # API request helper
+└─ services/api.ts            # API request wrapper
 
 ```
 
@@ -289,7 +289,7 @@ DELETE /api/v1/users/{id}
 ## Prerequisites
 
 - PHP 8.2+, Composer  
-- MySQL 8+ (or compatible)  
+- MySQL 8+ 
 - Node.js 16+, npm  
 
 
@@ -319,5 +319,21 @@ DELETE /api/v1/users/{id}
    ```bash
     composer run dev
     ```
+
+
+## Running Tests
+
+- Create a `.env.testing` file copying `.env`
+- Make sure your `.env.testing` is configured (SQLite in-memory) then:
+
+### Run only unit tests
+```bash
+./vendor/bin/phpunit --filter UserServiceTest
+```
+
+### Run only feature tests
+```bash
+./vendor/bin/phpunit --filter UserControllerTest
+``` 
 
 ## Notes
