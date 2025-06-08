@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, watch, onMounted } from 'vue'
+import { ref, watch, onMounted, computed } from 'vue'
 import { useApi } from '@/composables/useApi'
 import Loader from '@/components/Loader.vue'
 import NoData from '@/components/NoData.vue' 
@@ -47,6 +47,8 @@ const perPage     = ref(10)
 const page        = ref(1)
 const totalPages  = ref(1)
 
+const startIndex = computed(() => (page.value - 1) * perPage.value + 1)
+
 // Jump-to-page state
 const gotoPage = ref(page.value);
 const showCreate  = ref(false)
@@ -66,6 +68,8 @@ async function fetchUsers() {
     const params: Record<string, unknown> = {
       per_page: perPage.value,
       page:     page.value,
+      sort_by:  sortBy.value,
+      sort_direction: sortDirection.value,
     }
     if (searchTerm.value.trim() !== '') {
       params.search = searchTerm.value.trim()
@@ -102,6 +106,20 @@ function goToPage() {
   const p = Math.max(1, Math.min(totalPages.value, gotoPage.value));
   page.value = p;
 }
+
+const sortBy = ref('id')
+const sortDirection = ref<'asc' | 'desc'>('desc')
+
+function toggleSort(column: string) {
+  if (sortBy.value === column) {
+    sortDirection.value = sortDirection.value === 'asc' ? 'desc' : 'asc'
+  } else {
+    sortBy.value = column
+    sortDirection.value = 'asc'
+  }
+  fetchUsers()
+}
+
 
 
 // Re-fetch whenever search term, page, or perPage changes
@@ -160,22 +178,21 @@ onMounted(fetchUsers)
     <div class="mb-4 flex items-center justify-between">
       <!-- Add User button -->
       <button @click="showCreate = true"
-              class="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 cursor-pointer">
+        class="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 cursor-pointer">
         Add User
       </button>
 
       <!-- Search + per-page + Go -->
       <div class="flex space-x-2">
         <input v-model="searchTerm" @keyup.enter="fetchUsers" placeholder="Search..."
-               class="border rounded p-2 flex-1"/>
-        <select v-model.number="perPage"  class="border rounded p-2">
+          class="border rounded p-2 flex-1" />
+        <select v-model.number="perPage" class="border rounded p-2">
           <option :value="10">10</option>
           <option :value="15">15</option>
           <option :value="20">20</option>
           <option :value="50">50</option>
         </select>
-        <button @click="fetchUsers"
-                class="px-4 py-2 bg-blue-600 text-white rounded cursor-pointer">Go
+        <button @click="fetchUsers" class="px-4 py-2 bg-blue-600 text-white rounded cursor-pointer">Go
         </button>
       </div>
     </div>
@@ -194,7 +211,16 @@ onMounted(fetchUsers)
         <table class="w-full table-auto border-collapse">
           <thead class="sticky top-0 bg-gray-100 z-10">
             <tr>
-              <th class="border p-2">First Name</th>
+              <th class="border p-2 cursor-pointer" @click="toggleSort('id')">SL No.
+                <span v-if="sortBy === 'id'">
+                  <i :class="sortDirection === 'asc' ? 'fa fa-arrow-up' : 'fa fa-arrow-down'"></i>
+                </span>
+              </th>
+              <th class="border p-2 cursor-pointer" @click="toggleSort('first_name')">First Name
+                <span v-if="sortBy === 'first_name'">
+                  <i :class="sortDirection === 'asc' ? 'fa fa-arrow-up' : 'fa fa-arrow-down'"></i>
+                </span>
+              </th>
               <th class="border p-2">Last Name</th>
               <th class="border p-2">Email</th>
               <th class="border p-2">City</th>
@@ -203,8 +229,9 @@ onMounted(fetchUsers)
             </tr>
           </thead>
           <tbody>
-            <tr v-for="u in users" :key="u.id" @click="openModal(u.id)"
-                class="hover:bg-gray-100 cursor-pointer">
+            <tr v-for="(u, index) in users" :key="u.id" @click="openModal(u.id)"
+              class="hover:bg-gray-100 cursor-pointer">
+              <td class="border p-2">{{ startIndex + index }}</td>
               <td class="border p-2">{{ u.first_name }}</td>
               <td class="border p-2">{{ u.last_name }}</td>
               <td class="border p-2">{{ u.email }}</td>
@@ -212,10 +239,8 @@ onMounted(fetchUsers)
               <td class="border p-2">{{ u.address.country }}</td>
               <td class="border p-2">
                 <div class="flex items-center justify-center space-x-4">
-                  <i class="fa fa-pencil cursor-pointer hover:text-blue-600"
-                     @click.stop="openEditModal(u.id)"></i>
-                  <i class="fa fa-trash cursor-pointer hover:text-red-600"
-                     @click.stop="deleteUser(u.id)"></i>
+                  <i class="fa fa-pencil cursor-pointer hover:text-blue-600" @click.stop="openEditModal(u.id)"></i>
+                  <i class="fa fa-trash cursor-pointer hover:text-red-600" @click.stop="deleteUser(u.id)"></i>
                 </div>
               </td>
             </tr>
@@ -226,20 +251,18 @@ onMounted(fetchUsers)
       <!-- Pagination controls -->
       <div class="mt-4 flex justify-center space-x-2">
         <button :disabled="page <= 1" @click="page--"
-                class="px-3 py-1 border rounded cursor-pointer hover:text-blue-600">
+          class="px-3 py-1 border rounded cursor-pointer hover:text-blue-600">
           Prev
         </button>
         <span>Page {{ page }} of {{ totalPages }}</span>
         <button :disabled="page >= totalPages" @click="page++"
-                class="px-3 py-1 border rounded cursor-pointer hover:text-red-600">
+          class="px-3 py-1 border rounded cursor-pointer hover:text-red-600">
           Next
         </button>
 
-        <input type="number" v-model.number="gotoPage" :min="1" :max="totalPages"
-               @keyup.enter="goToPage"
-               class="w-16 text-center border rounded p-1"/>
-        <button @click="goToPage"
-                class="px-3 py-1 border rounded cursor-pointer hover:text-green-700">
+        <input type="number" v-model.number="gotoPage" :min="1" :max="totalPages" @keyup.enter="goToPage"
+          class="w-16 text-center border rounded p-1" />
+        <button @click="goToPage" class="px-3 py-1 border rounded cursor-pointer hover:text-green-700">
           Go
         </button>
       </div>
@@ -247,15 +270,13 @@ onMounted(fetchUsers)
 
     <!-- Modals -->
     <UserDetailModal v-if="showModal" :user="selectedUser!" :editMode="isEditing"
-                     @close="showModal = false; isEditing = false"
-                     @updated="() => { fetchUsers(); showModal = false; isEditing = false; }"/>
+      @close="showModal = false; isEditing = false"
+      @updated="() => { fetchUsers(); showModal = false; isEditing = false; }" />
 
-    <UserCreateModal v-if="showCreate"
-                     @created="() => { showCreate = false; fetchUsers(); }"
-                     @close="showCreate = false"/>
+    <UserCreateModal v-if="showCreate" @created="() => { showCreate = false; fetchUsers(); }"
+      @close="showCreate = false" />
 
-    <DeleteConfirmModal :show="showDelete"
-                        @cancel="showDelete = false; userToDelete = null"
-                        @confirm="onDeleteConfirm"/>
+    <DeleteConfirmModal :show="showDelete" @cancel="showDelete = false; userToDelete = null"
+      @confirm="onDeleteConfirm" />
   </div>
 </template>

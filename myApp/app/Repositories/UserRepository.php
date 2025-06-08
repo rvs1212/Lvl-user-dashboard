@@ -10,8 +10,13 @@ use Illuminate\Support\Str;
 class UserRepository implements UserRepositoryInterface
 {
     //Full text index based seach can be done later
-    public function paginateWithAddress(int $perPage, ?string $search): LengthAwarePaginator
+    public function paginateWithAddress(int $perPage, ?string $search, ?string $sortBy = 'id', ?string $sortDirection = 'desc'): LengthAwarePaginator
     {
+        $allowedSortBy = ['id', 'first_name', 'last_name', 'email'];
+        if (!in_array($sortBy, $allowedSortBy)) {
+            $sortBy = 'id';
+        }
+        $sortDirection = strtolower($sortDirection) === 'asc' ? 'asc' : 'desc';
         return User::with('address')
             ->when($search, function ($q) use ($search) {
                 $q->where('first_name', 'like', "%{$search}%")
@@ -22,7 +27,7 @@ class UserRepository implements UserRepositoryInterface
                         ->orWhere('country','like', "%{$search}%");
                 });
             })
-            ->orderBy('id', 'desc')
+            ->orderBy($sortBy, $sortDirection)
             ->paginate($perPage);
     }
 

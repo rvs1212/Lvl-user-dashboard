@@ -21,9 +21,11 @@ class UserController extends Controller
         $params  = $request->validated();
         $perPage = $params['per_page'] ?? config('data.pagination.per_page_default');
         $search  = $params['search']   ?? null;
+        $sortBy  = $params['sort_by']  ?? 'id';
+        $sortDirection = $params['sort_direction'] ?? 'desc';
 
         return response()->json(
-            $this->userService->getUsers($perPage, $search),
+            $this->userService->getUsers($perPage, $search, $sortBy, $sortDirection),
             config('data.http.ok')
         );
     }

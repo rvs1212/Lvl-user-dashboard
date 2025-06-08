@@ -12,9 +12,9 @@ class UserService implements UserServiceInterface
 
     }
 
-    public function getUsers(int $perPage, ?string $search): LengthAwarePaginator
+    public function getUsers(int $perPage, ?string $search, ?string $sortBy = 'id', ?string $sortDirection = 'desc'): LengthAwarePaginator
     {
-        return $this->users->paginateWithAddress($perPage, $search);
+        return $this->users->paginateWithAddress($perPage, $search, $sortBy, $sortDirection);
     }
 
     public function getUser(int $id): ?User

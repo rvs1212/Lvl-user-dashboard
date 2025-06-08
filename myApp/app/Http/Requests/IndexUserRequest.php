@@ -24,6 +24,9 @@ class IndexUserRequest extends FormRequest
         return [
             'per_page' => ['sometimes','integer','min:1','max:100'],
             'search'   => ['nullable','string','max:255'],
+            'sort_by'  => ['sometimes','string','max:255'],
+            'sort_direction' => ['sometimes','string','max:255'],
+            
         ];
     }
 }
